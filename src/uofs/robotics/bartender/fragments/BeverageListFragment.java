@@ -1,5 +1,7 @@
 package uofs.robotics.bartender.fragments;
 
+import java.util.List;
+
 import uofs.robotics.bartender.AddBeverageActivity;
 import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.adapters.BeverageAdapter;
@@ -42,6 +44,16 @@ public class BeverageListFragment extends ListFragment {
 		BeverageAdapter adapter = new BeverageAdapter(activity,
 				Beverage.getAll());
 		setListAdapter(adapter);
+	}
+	
+    @Override
+	public void onResume() {
+		super.onResume();
+		
+		List<Beverage> beverages = Beverage.getAll();
+		
+	    BeverageAdapter adapter = new BeverageAdapter(getActivity(), beverages);
+	    setListAdapter(adapter);
 	}
 	
     @Override

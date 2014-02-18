@@ -21,6 +21,19 @@ public class Bottle extends Model {
 
 	@Column(name = "taken")
 	private int taken;
+	
+	public Bottle()
+	{
+		
+	}
+	
+	public Bottle(Beverage beverage, int slot, int capacity, int taken)
+	{
+		this.beverage = beverage;
+		this.slot = slot;
+		this.capacity = capacity;
+		this.taken = taken;
+	}
 
 	public Beverage getBeverage() {
 		return this.beverage;

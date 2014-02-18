@@ -10,12 +10,18 @@ import com.activeandroid.query.Select;
 @Table(name = "drinks")
 public class Drink extends Model {
 
-	public Drink() {
-		super();
-	}
-
 	@Column(name = "name")
 	private String name;
+	
+	public Drink() 
+	{
+		super();
+	}
+	
+	public Drink (String name)
+	{
+		this.name = name;
+	}
 
 	public String getName() {
 		return this.name;

@@ -20,6 +20,17 @@ public class Beverage extends Model {
 
 	@Column(name = "type", notNull = true)
 	private String type;
+	
+	public Beverage()
+	{
+		
+	}
+	
+	public Beverage(String name, String type)
+	{
+		this.name = name;
+		this.type = type;
+	}
 
 	public String getName() {
 		return this.name;

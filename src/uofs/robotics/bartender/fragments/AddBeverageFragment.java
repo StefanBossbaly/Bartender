@@ -4,6 +4,7 @@ import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.models.Beverage;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -63,6 +64,8 @@ public class AddBeverageFragment extends Fragment implements OnClickListener {
 			// Create the beverage and save it
 			Beverage beverage = new Beverage(name, type);
 			beverage.save();
+			
+			Log.d("Bartender", "Beverage added with an id of " + beverage.getId());
 			
 			// We are done here
 			getActivity().finish();

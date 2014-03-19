@@ -5,6 +5,7 @@
     android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -41,8 +42,8 @@
             android:label="@string/title_activity_add_beverage" >
         </activity>
         <activity
-            android:name="uofs.robotics.bartender.BluetoothActivity"
-            android:label="@string/title_activity_bluetooth" >
+            android:name="uofs.robotics.bartender.BluetoothDeviceListActivity"
+            android:label="@string/title_activity_bluetooth_device_list" >
         </activity>
     </application>
 

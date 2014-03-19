@@ -10,15 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="5dp"
-        android:visibility="gone" >
+        android:visibility="visible" >
     </TextView>
 
     <ListView
         android:id="@+id/list_paired_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:stackFromBottom="true" >
+        android:layout_weight="1" >
     </ListView>
 
     <TextView
@@ -27,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="5dp"
-        android:visibility="gone" >
+        android:visibility="visible" >
     </TextView>
 
     <ListView
@@ -35,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:stackFromBottom="true" >
+         >
     </ListView>
 
     <Button

@@ -11,10 +11,10 @@ public class BartenderApplication extends Application {
         super.onCreate();
         ActiveAndroid.initialize(this);
     }
+    
     @Override
     public void onTerminate() {
         super.onTerminate();
         ActiveAndroid.dispose();
     }
-	
 }

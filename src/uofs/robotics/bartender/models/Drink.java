@@ -30,6 +30,20 @@ public class Drink extends Model {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public List<BeverageDrink> getBeverageDrink()
+	{
+		return getMany(BeverageDrink.class, "drink");
+	}
+	
+	public List<Beverage> getBeverages()
+	{
+		return new Select()
+				.from(Beverage.class)
+				.join(BeverageDrink.class)
+				.on("?.be")
+				.execute();
+	}
 
 	public static List<Drink> getAll() {
 		return new Select().from(Drink.class).orderBy("name DESC").execute();

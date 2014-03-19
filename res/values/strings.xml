@@ -21,9 +21,8 @@
     <!-- Button Strings -->
     <string name="button_add_drink">Add Drink</string>
     <string name="button_add_beverage">Add Beverage</string>
-    
-    
     <string name="app_name">Bartender</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_bluetooth">Bluetooth</string>
 
 </resources>

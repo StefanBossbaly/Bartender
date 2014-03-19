@@ -47,6 +47,10 @@ public class Beverage extends Model {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public List<BeverageDrink> getBottleDrinks(){
+		return getMany(BeverageDrink.class, "beverage");
+	}
 
 	public List<Bottle> getBottles() {
 		return getMany(Bottle.class, "bottle");

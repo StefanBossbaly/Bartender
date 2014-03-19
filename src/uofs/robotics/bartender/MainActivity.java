@@ -5,10 +5,12 @@ import uofs.robotics.bartender.fragments.BeverageListFragment;
 import uofs.robotics.bartender.fragments.BottleListFragment;
 import uofs.robotics.bartender.fragments.DrinkListFragment;
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
@@ -67,7 +69,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
         return true;
     }
     
+    
+    
     @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+    	
+    	if (item.getItemId() == R.id.action_bluetooth_device)
+    	{
+    		Intent i = new Intent(this, BluetoothDeviceListActivity.class);
+    		startActivity(i);
+    		
+    		return true;
+    	}
+    	
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
     public boolean onNavigationItemSelected(int position, long id) {
         // When the given dropdown item is selected, show its contents in the
         // container view.

@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_add_drink">Add Drink</string>
     <string name="action_add_beverage">Add Beverage</string>
+    <string name="action_bluetooth_device">Bluetooth Devices</string>
 
     <!-- NavBar Strings -->
     <string name="title_drinks">Drinks</string>
@@ -12,6 +13,7 @@
     <string name="title_beverages">Beverages</string>
     <string name="title_activity_add_drink">Add Drink</string>
     <string name="title_activity_add_beverage">Add Beverage</string>
+    <string name="title_activity_bluetooth_device_list">Bluetooth Devices</string>
 
     <!-- Text Strings -->
     <string name="text_name">Name</string>
@@ -27,6 +29,6 @@
     <string name="app_name">Bartender</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_bluetooth">Bluetooth</string>
-    <string name="title_activity_bluetooth_device_list">BluetoothDeviceListActivity</string>
+    
 
 </resources>

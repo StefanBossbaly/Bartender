@@ -10,26 +10,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class BottleListFragment extends ListFragment {
-	
-	public BottleListFragment()
-	{
-		
+
+	public BottleListFragment() {
+
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// We have our own option menu
 		setHasOptionsMenu(true);
 	}
-	
+
 	@Override
-	public void onAttach(Activity activity){
+	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		
+
 		BottleAdapter adapter = new BottleAdapter(activity, Bottle.getAll());
-		
+
 		setListAdapter(adapter);
 	}
 
@@ -43,5 +42,5 @@ public class BottleListFragment extends ListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		return super.onOptionsItemSelected(item);
-	}	
+	}
 }

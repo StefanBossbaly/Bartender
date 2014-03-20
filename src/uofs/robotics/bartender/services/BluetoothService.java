@@ -14,7 +14,7 @@ public class BluetoothService {
 
 	// Our log tag
 	private static final String TAG = "BluetoothService";
-	
+
 	// Seems to be the UUID that is compatible with the device
 	private static final UUID BLUETOOTH_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 

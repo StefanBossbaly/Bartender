@@ -24,15 +24,12 @@ public class BeverageAdapter extends ArrayAdapter<Beverage> {
 
 		// Check if an existing view is being reused, otherwise inflate the view
 		if (convertView == null) {
-			convertView = LayoutInflater.from(getContext()).inflate(
-					R.layout.list_item_beverage, null);
+			convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_beverage, null);
 		}
 
 		// Lookup view for data population
-		TextView name = (TextView) convertView
-				.findViewById(R.id.text_beverage_name);
-		TextView type = (TextView) convertView
-				.findViewById(R.id.text_beverage_type);
+		TextView name = (TextView) convertView.findViewById(R.id.text_beverage_name);
+		TextView type = (TextView) convertView.findViewById(R.id.text_beverage_type);
 
 		// Populate the data into the template view using the data object
 		name.setText(beverage.getName());

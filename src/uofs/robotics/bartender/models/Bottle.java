@@ -21,14 +21,12 @@ public class Bottle extends Model {
 
 	@Column(name = "taken")
 	private int taken;
-	
-	public Bottle()
-	{
-		
+
+	public Bottle() {
+
 	}
-	
-	public Bottle(Beverage beverage, int slot, int capacity, int taken)
-	{
+
+	public Bottle(Beverage beverage, int slot, int capacity, int taken) {
 		this.beverage = beverage;
 		this.slot = slot;
 		this.capacity = capacity;

@@ -126,22 +126,22 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 
 	private OnItemClickListener deviceClickListener = new OnItemClickListener() {
 		public void onItemClick(AdapterView<?> av, View view, int arg2, long arg3) {
-			
+
 			// No more discovery we are going to connect
 			bluetoothAdapter.cancelDiscovery();
-			
+
 			// Get the selected MAC address
 			String info = ((TextView) view).getText().toString();
 			String macAddress = info.substring(info.length() - 17);
-			
+
 			// Get the device from the MAC address
 			BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
-			
+
 			// Start up the connection
 			Application app = getActivity().getApplication();
 			BluetoothService service = ((BartenderApplication) app).getBluetoothService();
 			service.connect(device);
-			
+
 			// We are done here
 			getActivity().finish();
 		}

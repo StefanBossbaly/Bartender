@@ -24,8 +24,7 @@ public class BeverageListFragment extends ListFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -41,38 +40,36 @@ public class BeverageListFragment extends ListFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		BeverageAdapter adapter = new BeverageAdapter(activity,
-				Beverage.getAll());
+		BeverageAdapter adapter = new BeverageAdapter(activity, Beverage.getAll());
 		setListAdapter(adapter);
 	}
-	
-    @Override
+
+	@Override
 	public void onResume() {
 		super.onResume();
-		
+
 		List<Beverage> beverages = Beverage.getAll();
-		
-	    BeverageAdapter adapter = new BeverageAdapter(getActivity(), beverages);
-	    setListAdapter(adapter);
+
+		BeverageAdapter adapter = new BeverageAdapter(getActivity(), beverages);
+		setListAdapter(adapter);
 	}
-	
-    @Override
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.beverage_list, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.beverage_list, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
-		if (item.getItemId() == R.id.action_add_beverage)
-		{
+
+		if (item.getItemId() == R.id.action_add_beverage) {
 			Intent i = new Intent(getActivity(), AddBeverageActivity.class);
 			startActivity(i);
-			
+
 			return true;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 }

@@ -20,14 +20,12 @@ public class Beverage extends Model {
 
 	@Column(name = "type", notNull = true)
 	private String type;
-	
-	public Beverage()
-	{
-		
+
+	public Beverage() {
+
 	}
-	
-	public Beverage(String name, String type)
-	{
+
+	public Beverage(String name, String type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -47,8 +45,8 @@ public class Beverage extends Model {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	public List<BeverageDrink> getBottleDrinks(){
+
+	public List<BeverageDrink> getBottleDrinks() {
 		return getMany(BeverageDrink.class, "beverage");
 	}
 

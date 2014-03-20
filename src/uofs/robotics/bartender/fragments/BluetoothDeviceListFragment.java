@@ -6,7 +6,6 @@ import uofs.robotics.bartender.BartenderApplication;
 import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.services.BluetoothService;
 import uofs.robotics.bartender.services.StateChangeReceiver;
-import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -25,7 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class BluetoothDeviceListFragment extends Fragment implements OnClickListener, StateChangeReceiver {
 

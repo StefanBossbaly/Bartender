@@ -2,7 +2,10 @@ package uofs.robotics.bartender.fragments;
 
 import java.util.Set;
 
+import uofs.robotics.bartender.BartenderApplication;
 import uofs.robotics.bartender.R;
+import uofs.robotics.bartender.services.BluetoothService;
+import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -15,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -51,9 +56,11 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 		// Set the list adapters
 		ListView newDevicesList = (ListView) view.findViewById(R.id.list_new_devices);
 		newDevicesList.setAdapter(newDevicesAdapter);
+		newDevicesList.setOnItemClickListener(deviceClickListener);
 
 		ListView pairedDevicesList = (ListView) view.findViewById(R.id.list_paired_devices);
 		pairedDevicesList.setAdapter(pairedDevicesAdapter);
+		pairedDevicesList.setOnItemClickListener(deviceClickListener);
 
 		// Get the default bluetooth adapter
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -117,6 +124,29 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 		}
 	}
 
+	private OnItemClickListener deviceClickListener = new OnItemClickListener() {
+		public void onItemClick(AdapterView<?> av, View view, int arg2, long arg3) {
+			
+			// No more discovery we are going to connect
+			bluetoothAdapter.cancelDiscovery();
+			
+			// Get the selected MAC address
+			String info = ((TextView) view).getText().toString();
+			String macAddress = info.substring(info.length() - 17);
+			
+			// Get the device from the MAC address
+			BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+			
+			// Start up the connection
+			Application app = getActivity().getApplication();
+			BluetoothService service = ((BartenderApplication) app).getBluetoothService();
+			service.connect(device);
+			
+			// We are done here
+			getActivity().finish();
+		}
+	};
+
 	/**
 	 * Our broadcast receiver that will handle the broadcast from the Bluetooth
 	 * API
@@ -138,12 +168,12 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 				if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
 					newDevicesAdapter.add(device.getName() + "\n" + device.getAddress());
 				}
-			// Discovery process is over	
+				// Discovery process is over
 			} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 
 				// Stop ridding spinners
 				getActivity().setProgressBarIndeterminateVisibility(false);
-				
+
 				// No devices were found, alert the user
 				if (newDevicesAdapter.getCount() == 0) {
 					Toast.makeText(getActivity(), "No devices found", Toast.LENGTH_LONG).show();

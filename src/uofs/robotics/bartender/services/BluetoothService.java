@@ -11,12 +11,12 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 public class BluetoothService {
-	
+
 	// Our log tag
 	private static final String TAG = "BluetoothService";
-
-	// http://www.famkruithof.net/uuid/uuidgen
-	private static final UUID BLUETOOTH_UUID = UUID.fromString("7849b190-af8a-11e3-a5e2-0800200c9a66");
+	
+	// Seems to be the UUID that is compatible with the device
+	private static final UUID BLUETOOTH_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
 	// States
 	public static final int STATE_NONE = 0;
@@ -25,7 +25,7 @@ public class BluetoothService {
 	public static final int STATE_CONNECTED = 3;
 
 	private final BluetoothAdapter bluetoothAdapter;
-	
+
 	private ConnectThread connectThread;
 	private ConnectedThread connectedThread;
 	private int state;
@@ -33,6 +33,8 @@ public class BluetoothService {
 	public BluetoothService() {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		state = STATE_NONE;
+
+		Log.i(TAG, "Service initialized");
 	}
 
 	private synchronized void setState(int newState) {
@@ -44,6 +46,7 @@ public class BluetoothService {
 	}
 
 	public synchronized void start() {
+		Log.d(TAG, "start()");
 
 		// Make sure that we are not connecting
 		if (connectThread != null) {
@@ -51,7 +54,7 @@ public class BluetoothService {
 			connectThread = null;
 		}
 
-		// Make sure there wasn't a thread that already exists
+		// Make sure there wasn't a connected device
 		if (connectedThread != null) {
 			connectedThread.cancel();
 			connectedThread = null;
@@ -59,20 +62,24 @@ public class BluetoothService {
 
 		setState(STATE_NONE);
 	}
-	
-	public synchronized BluetoothDevice getDevice(){
-		if (getState() == STATE_CONNECTED){
+
+	public synchronized BluetoothDevice getDevice() {
+		if (getState() == STATE_CONNECTED) {
 			return connectedThread.socket.getRemoteDevice();
 		}
-		
+
 		return null;
 	}
 
 	public synchronized void connect(BluetoothDevice device) {
+		Log.d(TAG, "connect()");
+
 		// Make sure that we are not connecting
-		if (connectThread != null) {
-			connectThread.cancel();
-			connectThread = null;
+		if (getState() == STATE_CONNECTING) {
+			if (connectThread != null) {
+				connectThread.cancel();
+				connectThread = null;
+			}
 		}
 
 		// Make sure there wasn't a thread that already exists
@@ -89,6 +96,7 @@ public class BluetoothService {
 	}
 
 	public synchronized void connected(BluetoothDevice device, BluetoothSocket socket) {
+		Log.d(TAG, "connected()");
 
 		// Make sure that we are not connecting
 		if (connectThread != null) {
@@ -104,13 +112,13 @@ public class BluetoothService {
 
 		connectedThread = new ConnectedThread(socket);
 		connectedThread.start();
-		
-		
 
 		setState(STATE_CONNECTED);
 	}
 
 	public synchronized void stop() {
+		Log.d(TAG, "stop()");
+
 		if (connectThread != null) {
 			connectThread.cancel();
 			connectThread = null;
@@ -125,6 +133,15 @@ public class BluetoothService {
 		setState(STATE_NONE);
 	}
 
+	private void connectionFailed() {
+		setState(STATE_NONE);
+
+	}
+
+	private void connectionLost() {
+		setState(STATE_NONE);
+	}
+
 	private class ConnectThread extends Thread {
 		private final BluetoothDevice device;
 		private final BluetoothSocket socket;
@@ -136,9 +153,9 @@ public class BluetoothService {
 			BluetoothSocket tempSocket = null;
 
 			try {
-				device.createRfcommSocketToServiceRecord(BLUETOOTH_UUID);
+				tempSocket = device.createRfcommSocketToServiceRecord(BLUETOOTH_UUID);
 			} catch (IOException e) {
-
+				Log.e(TAG, "Can not create socket to device", e);
 			}
 
 			socket = tempSocket;
@@ -146,10 +163,19 @@ public class BluetoothService {
 
 		@Override
 		public void run() {
+			Log.i(TAG, "ConnectThread started and running");
 
+			// Cancel Discovery
+			bluetoothAdapter.cancelDiscovery();
+
+			Log.i(TAG, "Connecting to device " + socket.getRemoteDevice().getAddress());
+
+			// Try and connect to the device
 			try {
 				socket.connect();
 			} catch (IOException e) {
+				// We failed
+				connectionFailed();
 				try {
 					Log.e(TAG, "Error trying to conect() socket ... atempting to close", e);
 
@@ -162,10 +188,13 @@ public class BluetoothService {
 				return;
 			}
 
-			// Reset connection thead atomicly
+			// Reset connection thread atomically
 			synchronized (BluetoothService.this) {
 				connectThread = null;
 			}
+
+			// Start up the connected thread to handle connections
+			connected(device, socket);
 		}
 
 		public void cancel() {
@@ -217,14 +246,31 @@ public class BluetoothService {
 						bytes = inputStream.read(buffer);
 
 						// TODO call handler
+						String s = "";
 
-						Log.d(TAG, "Recieved input bytes read " + bytes + " buffer containted " + buffer.toString());
+						for (int i = 0; i < bytes; i++) {
+							s += Character.toString((char) buffer[i]);
+						}
+
+						Log.d(TAG, "Recieved input bytes read " + bytes + " buffer containted " + s);
 					} else {
 						// We don't have anything to do so give up CPU time
 						Thread.yield();
 					}
 				} catch (IOException e) {
+					Log.e(TAG, "Connection lost with bluetooth device.", e);
+
 					// Oh no
+					connectionLost();
+
+					// Try to clean up the connections
+					try {
+						inputStream.close();
+						outputStream.close();
+						socket.close();
+					} catch (IOException e2) {
+						Log.e(TAG, "Exception occured while trying to close disconnected socket", e2);
+					}
 
 					// Exit out of the loop
 					break;

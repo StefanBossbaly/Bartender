@@ -21,7 +21,11 @@
     <string name="text_beverage_type">Type</string>
     <string name="text_paired_devices">Paired Devices</string>
     <string name="text_new_devices">New Devices</string>
+    <string name="text_blank_content">No Bluetooth device is currently paired with the app. Please go to settings and pair with the desired Bluetooth device.</string>
 
+    <!-- Label Strings -->
+    <string name="text_status">Status: </string>
+    
     <!-- Button Strings -->
     <string name="button_add_drink">Add Drink</string>
     <string name="button_add_beverage">Add Beverage</string>
@@ -29,6 +33,5 @@
     <string name="app_name">Bartender</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_bluetooth">Bluetooth</string>
-    
 
 </resources>

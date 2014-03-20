@@ -3,6 +3,7 @@ package uofs.robotics.bartender.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
@@ -24,6 +25,9 @@ public class BluetoothService {
 	public static final int STATE_CONNECTING = 2;
 	public static final int STATE_CONNECTED = 3;
 
+	// Call backs
+	private ArrayList<StateChangeReceiver> stateChangeReceivers;
+
 	private final BluetoothAdapter bluetoothAdapter;
 
 	private ConnectThread connectThread;
@@ -33,12 +37,27 @@ public class BluetoothService {
 	public BluetoothService() {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		state = STATE_NONE;
+		stateChangeReceivers = new ArrayList<StateChangeReceiver>();
 
 		Log.i(TAG, "Service initialized");
 	}
 
+	public void registerStateChangeReciever(StateChangeReceiver receiver) {
+		stateChangeReceivers.add(receiver);
+	}
+
+	public void unregisterStateChangeReciever(StateChangeReceiver receiver) {
+		stateChangeReceivers.remove(receiver);
+	}
+
 	private synchronized void setState(int newState) {
+		int oldState = state;
+
 		state = newState;
+
+		for (StateChangeReceiver receiver : stateChangeReceivers) {
+			receiver.stateChange(oldState, newState);
+		}
 	}
 
 	public synchronized int getState() {
@@ -239,6 +258,10 @@ public class BluetoothService {
 			int bytes = -1;
 
 			while (true) {
+				if (isInterrupted()) {
+					break;
+				}
+
 				// See if we have some input
 				try {
 					if (inputStream.available() > 0) {
@@ -287,7 +310,11 @@ public class BluetoothService {
 		}
 
 		public void cancel() {
+			this.interrupt();
+
 			try {
+				inputStream.close();
+				outputStream.close();
 				socket.close();
 			} catch (IOException e) {
 				Log.e(TAG, "close() on socket threw exception", e);

@@ -5,6 +5,7 @@ import java.util.Set;
 import uofs.robotics.bartender.BartenderApplication;
 import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.services.BluetoothService;
+import uofs.robotics.bartender.services.StateChangeReceiver;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -26,14 +27,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BluetoothDeviceListFragment extends Fragment implements OnClickListener {
+public class BluetoothDeviceListFragment extends Fragment implements OnClickListener, StateChangeReceiver {
 
-	private TextView newDevicesText, pairedDevicesText;
+	private TextView newDevicesText, pairedDevicesText, statusText;
 
 	private BluetoothAdapter bluetoothAdapter;
 	private ArrayAdapter<String> pairedDevicesAdapter;
 	private ArrayAdapter<String> newDevicesAdapter;
 	private BluetoothBroadcastReciever bluetoothBroadcastReciever;
+	private BluetoothService bluetoothService;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +54,9 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 		// Pull out our text views
 		newDevicesText = (TextView) view.findViewById(R.id.text_new_devices);
 		pairedDevicesText = (TextView) view.findViewById(R.id.text_paired_devices);
+		statusText = (TextView) view.findViewById(R.id.text_status);
+
+		updateStatus(bluetoothService.getState());
 
 		// Set the list adapters
 		ListView newDevicesList = (ListView) view.findViewById(R.id.list_new_devices);
@@ -93,6 +98,11 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 		// Register when we are done the discovery process
 		filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 		getActivity().registerReceiver(bluetoothBroadcastReciever, filter);
+
+		// Register for state updates
+		bluetoothService = ((BartenderApplication) getActivity().getApplication()).getBluetoothService();
+		bluetoothService.registerStateChangeReciever(this);
+
 	}
 
 	@Override
@@ -104,6 +114,9 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 
 		// Unregister our receiver
 		getActivity().unregisterReceiver(bluetoothBroadcastReciever);
+
+		// Unregister for state changes
+		bluetoothService.unregisterStateChangeReciever(this);
 	}
 
 	@Override
@@ -124,6 +137,28 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 		}
 	}
 
+	@Override
+	public void stateChange(int oldState, int newState) {
+		updateStatus(newState);
+	}
+
+	private void updateStatus(final int status) {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (BluetoothService.STATE_NONE == status) {
+					statusText.setText("None");
+				} else if (BluetoothService.STATE_LISTENING == status) {
+					statusText.setText("Listening");
+				} else if (BluetoothService.STATE_CONNECTING == status) {
+					statusText.setText("Connecting");
+				} else {
+					statusText.setText("Connected");
+				}
+			}
+		});
+	}
+
 	private OnItemClickListener deviceClickListener = new OnItemClickListener() {
 		public void onItemClick(AdapterView<?> av, View view, int arg2, long arg3) {
 
@@ -136,14 +171,19 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 
 			// Get the device from the MAC address
 			BluetoothDevice device = bluetoothAdapter.getRemoteDevice(macAddress);
+			BluetoothDevice current = bluetoothService.getDevice();
 
-			// Start up the connection
-			Application app = getActivity().getApplication();
-			BluetoothService service = ((BartenderApplication) app).getBluetoothService();
-			service.connect(device);
-
-			// We are done here
-			getActivity().finish();
+			if (bluetoothService.getState() == BluetoothService.STATE_NONE) {
+				// Start up the connection
+				bluetoothService.connect(device);
+			} else {
+				// They are equal, so disconnect
+				if (current != null && current.getAddress().equals(device.getAddress())) {
+					bluetoothService.stop();
+				} else {
+					bluetoothService.connect(device);
+				}
+			}
 		}
 	};
 
@@ -176,7 +216,7 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 
 				// No devices were found, alert the user
 				if (newDevicesAdapter.getCount() == 0) {
-					Toast.makeText(getActivity(), "No devices found", Toast.LENGTH_LONG).show();
+					//TODO do something
 				}
 			}
 		}

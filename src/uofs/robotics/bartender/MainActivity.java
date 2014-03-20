@@ -1,13 +1,16 @@
 package uofs.robotics.bartender;
 
 import uofs.robotics.bartender.fragments.BeverageListFragment;
+import uofs.robotics.bartender.fragments.BlankFragment;
 import uofs.robotics.bartender.fragments.BottleListFragment;
 import uofs.robotics.bartender.fragments.DrinkListFragment;
+import uofs.robotics.bartender.services.BluetoothService;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -20,10 +23,55 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 
+	private static final String TAG = "MainActivity";
+
+	private static final int REQUEST_BLUETOOTH_DEVICE = 1;
+
+	private static BluetoothService bluetoothService;
+
+	private boolean navTabMode = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		// Get the bluetooth service
+		bluetoothService = ((BartenderApplication) getApplication()).getBluetoothService();
+
+		hideTabNav();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// If we are connected then show the nav tabs
+		if (bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+			showTabNav();
+		} else {
+			hideTabNav();
+		}
+	}
+
+	private void hideTabNav() {
+		if (navTabMode == false)
+			return;
+		
+		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+		Fragment fragment = new BlankFragment();
+		getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+		
+		navTabMode = false;
+	}
+
+	private void showTabNav() {
+		
+		if (navTabMode == true)
+			return;
 
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
@@ -35,12 +83,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		// Specify a SpinnerAdapter to populate the dropdown list.
 				new ArrayAdapter<String>(actionBar.getThemedContext(), android.R.layout.simple_list_item_1, android.R.id.text1, new String[] { getString(R.string.title_drinks),
 						getString(R.string.title_bottles), getString(R.string.title_beverages), }), this);
+		
+		navTabMode = true;
 	}
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
-		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
+		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM) && navTabMode) {
 			getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
 		}
 	}
@@ -49,6 +99,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	public void onSaveInstanceState(Bundle outState) {
 		// Serialize the current dropdown position.
 		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		Log.d(TAG, "onActivityResult() callback");
+
+		if (requestCode == REQUEST_BLUETOOTH_DEVICE) {
+			if (resultCode == RESULT_OK) {
+				showTabNav();
+			} else if (resultCode == RESULT_CANCELED) {
+				if (bluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+					hideTabNav();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -63,7 +130,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 
 		if (item.getItemId() == R.id.action_bluetooth_device) {
 			Intent i = new Intent(this, BluetoothDeviceListActivity.class);
-			startActivity(i);
+			startActivityForResult(i, REQUEST_BLUETOOTH_DEVICE);
 
 			return true;
 		}

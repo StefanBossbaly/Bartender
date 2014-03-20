@@ -138,25 +138,25 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 	}
 
 	@Override
-	public void stateChange(int oldState, int newState) {
-		updateStatus(newState);
-	}
-
-	private void updateStatus(final int status) {
+	public void stateChange(int oldState, final int newState) {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (BluetoothService.STATE_NONE == status) {
-					statusText.setText("None");
-				} else if (BluetoothService.STATE_LISTENING == status) {
-					statusText.setText("Listening");
-				} else if (BluetoothService.STATE_CONNECTING == status) {
-					statusText.setText("Connecting");
-				} else {
-					statusText.setText("Connected");
-				}
+				updateStatus(newState);
 			}
 		});
+	}
+
+	private void updateStatus(int status) {
+		if (BluetoothService.STATE_NONE == status) {
+			statusText.setText("None");
+		} else if (BluetoothService.STATE_LISTENING == status) {
+			statusText.setText("Listening");
+		} else if (BluetoothService.STATE_CONNECTING == status) {
+			statusText.setText("Connecting");
+		} else {
+			statusText.setText("Connected");
+		}
 	}
 
 	private OnItemClickListener deviceClickListener = new OnItemClickListener() {
@@ -216,7 +216,7 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 
 				// No devices were found, alert the user
 				if (newDevicesAdapter.getCount() == 0) {
-					//TODO do something
+					// TODO do something
 				}
 			}
 		}

@@ -45,6 +45,10 @@
             android:name="uofs.robotics.bartender.BluetoothDeviceListActivity"
             android:label="@string/title_activity_bluetooth_device_list" >
         </activity>
+        <activity
+            android:name="uofs.robotics.bartender.DrinkInfoActivity"
+            android:label="@string/title_activity_drink_info" >
+        </activity>
     </application>
 
 </manifest>

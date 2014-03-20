@@ -3,6 +3,7 @@ package uofs.robotics.bartender.fragments;
 import java.util.List;
 
 import uofs.robotics.bartender.AddDrinkActivity;
+import uofs.robotics.bartender.DrinkInfoActivity;
 import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.adapters.DrinkAdapter;
 import uofs.robotics.bartender.models.Drink;
@@ -17,9 +18,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class DrinkListFragment extends ListFragment {
+	
+	private static final String TAG = "DrinkListFragment";
 
 	public DrinkListFragment() {
 
@@ -83,5 +87,23 @@ public class DrinkListFragment extends ListFragment {
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		// Get the selected drink
+		Drink drink = ((DrinkAdapter) l.getAdapter()).getItem(position);
+		
+		// Declare our paramaters
+		Bundle params = new Bundle();
+		params.putLong(DrinkInfoFragment.PARAM_DRINK_ID, drink.getId());
+		Log.d(TAG, "Putting param drink id into bundle with value of " + drink.getId());
+		
+		// Create the intent
+		Intent i = new Intent(getActivity(), DrinkInfoActivity.class);
+		i.putExtras(params);
+		
+		// Off we go!
+		getActivity().startActivity(i);
 	}
 }

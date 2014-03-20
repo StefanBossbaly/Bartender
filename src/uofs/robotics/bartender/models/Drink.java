@@ -29,12 +29,27 @@ public class Drink extends Model {
 		this.name = name;
 	}
 
-	public List<BeverageDrink> getBeverageDrink() {
-		return getMany(BeverageDrink.class, "drink");
-	}
-
 	public List<Beverage> getBeverages() {
-		return new Select().from(Beverage.class).join(BeverageDrink.class).on("?.be").execute();
+		return new Select()
+			.from(Beverage.class)
+			.join(BeverageDrink.class)
+			.on("beverages.id = beverage_drink.beverage")
+			.where("beverage_drink.drink = ?", getId())
+			.execute();
+	}
+	
+	public List<BeverageDrink> getBeverageDrink(){
+		return new Select()
+			.from(BeverageDrink.class)
+			.where("beverage_drink.drink = ?", getId())
+			.execute();
+	}
+	
+	public static Drink getById(long id){
+		return new Select()
+				.from(Drink.class)
+				.where("id = ?", id)
+				.executeSingle();
 	}
 
 	public static List<Drink> getAll() {

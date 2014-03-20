@@ -46,13 +46,23 @@ public class Beverage extends Model {
 		this.type = type;
 	}
 
-	public List<BeverageDrink> getBottleDrinks() {
+	public List<BeverageDrink> BeverageDrink() {
 		return getMany(BeverageDrink.class, "beverage");
+	}
+	
+	public List<Beverage> getBeverages(){
+		return new Select()
+		.from(Drink.class)
+		.join(BeverageDrink.class)
+		.on("drinks.id = beverage_drink.drink")
+		.where("beverage_drink.beverage = ?", getId())
+		.execute();
 	}
 
 	public List<Bottle> getBottles() {
 		return getMany(Bottle.class, "bottle");
 	}
+	
 
 	public static List<Beverage> getAll() {
 		return new Select().from(Beverage.class).orderBy("name DESC").execute();

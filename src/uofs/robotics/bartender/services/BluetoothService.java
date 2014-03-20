@@ -26,10 +26,11 @@ public class BluetoothService {
 	public static final int STATE_CONNECTED = 3;
 
 	// Call backs
-	private ArrayList<StateChangeReceiver> stateChangeReceivers;
+	private ArrayList<BluetoothServiceReceiver> receivers;
 
 	private final BluetoothAdapter bluetoothAdapter;
 
+	// Private instance vars
 	private ConnectThread connectThread;
 	private ConnectedThread connectedThread;
 	private int state;
@@ -37,17 +38,17 @@ public class BluetoothService {
 	public BluetoothService() {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		state = STATE_NONE;
-		stateChangeReceivers = new ArrayList<StateChangeReceiver>();
-
+		receivers = new ArrayList<BluetoothServiceReceiver>();
+		
 		Log.i(TAG, "Service initialized");
 	}
 
-	public void registerStateChangeReciever(StateChangeReceiver receiver) {
-		stateChangeReceivers.add(receiver);
+	public void registerReciever(BluetoothServiceReceiver receiver) {
+		receivers.add(receiver);
 	}
 
-	public void unregisterStateChangeReciever(StateChangeReceiver receiver) {
-		stateChangeReceivers.remove(receiver);
+	public void unregisterReciever(BluetoothServiceReceiver receiver) {
+		receivers.remove(receiver);
 	}
 
 	private synchronized void setState(int newState) {
@@ -55,7 +56,8 @@ public class BluetoothService {
 
 		state = newState;
 
-		for (StateChangeReceiver receiver : stateChangeReceivers) {
+		// Let the registered receivers know
+		for (BluetoothServiceReceiver receiver : receivers) {
 			receiver.stateChange(oldState, newState);
 		}
 	}
@@ -253,29 +255,30 @@ public class BluetoothService {
 
 		@Override
 		public void run() {
-
+			// Data holders
 			byte[] buffer = new byte[32];
 			int bytes = -1;
 
 			while (true) {
+				// If we were interrupted then stop execution
 				if (isInterrupted()) {
 					break;
 				}
 
-				// See if we have some input
 				try {
+					// See if we have some input
 					if (inputStream.available() > 0) {
 
+						// Let's read in the inputStream
 						bytes = inputStream.read(buffer);
-
-						// TODO call handler
-						String s = "";
-
-						for (int i = 0; i < bytes; i++) {
-							s += Character.toString((char) buffer[i]);
+						
+						Log.d(TAG, "Recieved " + bytes + " bytes from bluetooth device");
+						
+						// Let the registered receivers know
+						for (BluetoothServiceReceiver receiver : receivers) {
+							receiver.dataReceived(buffer, bytes);
 						}
-
-						Log.d(TAG, "Recieved input bytes read " + bytes + " buffer containted " + s);
+						
 					} else {
 						// We don't have anything to do so give up CPU time
 						Thread.yield();
@@ -310,8 +313,10 @@ public class BluetoothService {
 		}
 
 		public void cancel() {
-			this.interrupt();
+			// Stop the execution of the thread
+			interrupt();
 
+			// Try to close our streams and sockets
 			try {
 				inputStream.close();
 				outputStream.close();

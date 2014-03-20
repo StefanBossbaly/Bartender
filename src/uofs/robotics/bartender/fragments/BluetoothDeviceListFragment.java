@@ -5,7 +5,7 @@ import java.util.Set;
 import uofs.robotics.bartender.BartenderApplication;
 import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.services.BluetoothService;
-import uofs.robotics.bartender.services.StateChangeReceiver;
+import uofs.robotics.bartender.services.BluetoothServiceReceiver;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class BluetoothDeviceListFragment extends Fragment implements OnClickListener, StateChangeReceiver {
+public class BluetoothDeviceListFragment extends Fragment implements OnClickListener, BluetoothServiceReceiver {
 
 	private TextView newDevicesText, pairedDevicesText, statusText;
 
@@ -99,7 +99,7 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 
 		// Register for state updates
 		bluetoothService = ((BartenderApplication) getActivity().getApplication()).getBluetoothService();
-		bluetoothService.registerStateChangeReciever(this);
+		bluetoothService.registerReciever(this);
 
 	}
 
@@ -114,7 +114,7 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 		getActivity().unregisterReceiver(bluetoothBroadcastReciever);
 
 		// Unregister for state changes
-		bluetoothService.unregisterStateChangeReciever(this);
+		bluetoothService.unregisterReciever(this);
 	}
 
 	@Override
@@ -133,6 +133,11 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 			// Start the discovery
 			bluetoothAdapter.startDiscovery();
 		}
+	}
+	
+	@Override
+	public void dataReceived(byte[] data, int bytesRead) {
+		// We don't care
 	}
 
 	@Override

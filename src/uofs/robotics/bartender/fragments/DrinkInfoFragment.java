@@ -1,7 +1,11 @@
 package uofs.robotics.bartender.fragments;
 
+import java.util.List;
+
 import uofs.robotics.bartender.BartenderApplication;
 import uofs.robotics.bartender.R;
+import uofs.robotics.bartender.adapters.BeverageAdapter;
+import uofs.robotics.bartender.models.Beverage;
 import uofs.robotics.bartender.models.Drink;
 import uofs.robotics.bartender.services.BluetoothService;
 import uofs.robotics.bartender.services.BluetoothServiceReceiver;
@@ -59,7 +63,13 @@ public class DrinkInfoFragment extends Fragment implements BluetoothServiceRecei
 		drinkText.setText(drink.getName());
 		
 		ingredientsList = (ListView) view.findViewById(R.id.list_ingredients);
+		
+		// Populate the list
+		List<Beverage> beverages = drink.getBeverages();
+		BeverageAdapter adapter = new BeverageAdapter(getActivity(), beverages);
+		ingredientsList.setAdapter(adapter);
 
+		// Setup the order button
 		orderButton = (Button) view.findViewById(R.id.button_order);
 		orderButton.setOnClickListener(this);
 		setOrderButtonState(bluetoothService.getState());

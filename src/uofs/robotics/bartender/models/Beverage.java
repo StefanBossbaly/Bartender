@@ -14,6 +14,7 @@ public class Beverage extends Model {
 	public static final String TYPE_WISKEY = "wiskey";
 	public static final String TYPE_GIN = "gin";
 	public static final String TYPE_RUM = "rum";
+	public static final String TYPE_MIXER = "mixer";
 
 	@Column(name = "name", notNull = true, unique = true)
 	private String name;
@@ -44,6 +45,11 @@ public class Beverage extends Model {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	@Override
+	public String toString(){
+		return this.name;
 	}
 
 	public List<BeverageDrink> BeverageDrink() {

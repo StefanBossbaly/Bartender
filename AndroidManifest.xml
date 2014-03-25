@@ -33,9 +33,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- WORKAROUND the focus issue -->
         <activity
             android:name="uofs.robotics.bartender.AddDrinkActivity"
-            android:label="@string/title_activity_add_drink" >
+            android:label="@string/title_activity_add_drink"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="uofs.robotics.bartender.AddBeverageActivity"

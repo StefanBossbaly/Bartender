@@ -14,17 +14,33 @@
             android:layout_height="wrap_content"
             android:text="@string/text_name" />
 
-       <EditText
+        <EditText
             android:id="@+id/edit_drink_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10" >
+            android:ems="15"
+            android:inputType="text"
+            android:maxLines="1" >
         </EditText>
     </LinearLayout>
+	
+    <!-- WORKAROUND the focus issue -->
+    <ListView
+        android:id="@+id/list_ingredients"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:descendantFocusability="afterDescendants" />
+
+    <Button
+        android:id="@+id/button_add_ingredient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_add_ingredient" />
 
     <Button
         android:id="@+id/button_add_drink"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/button_add_drink" />
 

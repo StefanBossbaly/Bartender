@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import uofs.robotics.bartender.protocol.Message;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -39,7 +40,7 @@ public class BluetoothService {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		state = STATE_NONE;
 		receivers = new ArrayList<BluetoothServiceReceiver>();
-		
+
 		Log.i(TAG, "Service initialized");
 	}
 
@@ -82,6 +83,14 @@ public class BluetoothService {
 		}
 
 		setState(STATE_NONE);
+	}
+
+	public synchronized void send(Message message) {
+		if (getState() == STATE_CONNECTED) {
+			connectedThread.write(message.getContent());
+		} else {
+			throw new RuntimeException("Can't send message if we are not connected to a device");
+		}
 	}
 
 	public synchronized BluetoothDevice getDevice() {
@@ -253,6 +262,17 @@ public class BluetoothService {
 			outputStream = tempOut;
 		}
 
+		private String bytArrayToHex(byte[] a, int bytes) {
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < bytes; i++) {
+				byte b = a[i];
+				sb.append(String.format("%02x", (b & 0xFF)));
+			}
+
+			return sb.toString();
+		}
+
 		@Override
 		public void run() {
 			// Data holders
@@ -271,14 +291,15 @@ public class BluetoothService {
 
 						// Let's read in the inputStream
 						bytes = inputStream.read(buffer);
-						
+
 						Log.d(TAG, "Recieved " + bytes + " bytes from bluetooth device");
-						
+						Log.d(TAG, "Hex output: " + bytArrayToHex(buffer, bytes));
+
 						// Let the registered receivers know
 						for (BluetoothServiceReceiver receiver : receivers) {
 							receiver.dataReceived(buffer, bytes);
 						}
-						
+
 					} else {
 						// We don't have anything to do so give up CPU time
 						Thread.yield();

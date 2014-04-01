@@ -19,9 +19,23 @@ public class AddBeverageFragment extends Fragment implements OnClickListener {
 	private EditText editName;
 	private Spinner spinnerType;
 	private Button buttonAdd;
+	private long beverageID;
 
-	public AddBeverageFragment() {
+	private static final String BEVERAGE_ID = "beverage_id";
 
+	public static AddBeverageFragment newInstance() {
+		return new AddBeverageFragment();
+	}
+
+	public static AddBeverageFragment newInstance(long id) {
+		AddBeverageFragment fragment = new AddBeverageFragment();
+
+		// Put in the arguments
+		Bundle args = new Bundle();
+		args.putLong(BEVERAGE_ID, id);
+		fragment.setArguments(args);
+
+		return fragment;
 	}
 
 	@Override
@@ -44,6 +58,28 @@ public class AddBeverageFragment extends Fragment implements OnClickListener {
 		// Set up the button
 		buttonAdd.setOnClickListener(this);
 
+		// See if we are editing
+		Bundle args = getArguments();
+
+		if (args != null && args.containsKey(BEVERAGE_ID)) {
+			beverageID = args.getLong(BEVERAGE_ID);
+			Beverage beverage = Beverage.getById(beverageID);
+
+			editName.setText(beverage.getName());
+			for (int i = 0; i < spinnerType.getAdapter().getCount(); i++) {
+				String current = spinnerType.getAdapter().getItem(i).toString();
+
+				if (current.toLowerCase().equals(beverage.getType().toLowerCase())) {
+					spinnerType.setSelection(i);
+					break;
+				}
+			}
+
+			buttonAdd.setText(R.string.button_update_beverage);
+		} else {
+			beverageID = -1;
+		}
+
 		return view;
 	}
 
@@ -56,10 +92,17 @@ public class AddBeverageFragment extends Fragment implements OnClickListener {
 			String type = spinnerType.getSelectedItem().toString();
 
 			// Create the beverage and save it
-			Beverage beverage = new Beverage(name, type);
-			beverage.save();
-
-			Log.d("Bartender", "Beverage added with an id of " + beverage.getId());
+			if (beverageID == -1) {
+				Beverage beverage = new Beverage(name, type);
+				beverage.save();
+				Log.d("Bartender", "Beverage added with an id of " + beverage.getId());
+			} else {
+				Beverage beverage = Beverage.getById(beverageID);
+				beverage.setName(name);
+				beverage.setType(type);
+				beverage.save();
+				Log.d("Bartender", "Beverage updated with an id of " + beverage.getId());
+			}
 
 			// We are done here
 			getActivity().finish();

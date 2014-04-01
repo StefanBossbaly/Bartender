@@ -7,6 +7,8 @@ import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.adapters.BeverageAdapter;
 import uofs.robotics.bartender.models.Beverage;
 import uofs.robotics.bartender.models.Drink;
+import uofs.robotics.bartender.protocol.Message;
+import uofs.robotics.bartender.protocol.Protocol;
 import uofs.robotics.bartender.services.BluetoothService;
 import uofs.robotics.bartender.services.BluetoothServiceReceiver;
 import android.os.Bundle;
@@ -19,15 +21,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DrinkInfoFragment extends Fragment implements BluetoothServiceReceiver, OnClickListener {
 
-	
 	public static final String PARAM_DRINK_ID = "DRINK_ID";
 
 	private static final String TAG = "DrinkInfoFragment";
-	
+
 	private BluetoothService bluetoothService;
 
 	private TextView drinkText;
@@ -39,9 +39,9 @@ public class DrinkInfoFragment extends Fragment implements BluetoothServiceRecei
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Bundle bundle = getActivity().getIntent().getExtras();
-		
+
 		// Get the paramater
 		if (bundle.containsKey(PARAM_DRINK_ID)) {
 			drinkId = bundle.getLong(PARAM_DRINK_ID);
@@ -61,9 +61,9 @@ public class DrinkInfoFragment extends Fragment implements BluetoothServiceRecei
 		drinkText = (TextView) view.findViewById(R.id.text_drink_name);
 		Drink drink = Drink.getById(drinkId);
 		drinkText.setText(drink.getName());
-		
+
 		ingredientsList = (ListView) view.findViewById(R.id.list_ingredients);
-		
+
 		// Populate the list
 		List<Beverage> beverages = drink.getBeverages();
 		BeverageAdapter adapter = new BeverageAdapter(getActivity(), beverages);
@@ -110,7 +110,8 @@ public class DrinkInfoFragment extends Fragment implements BluetoothServiceRecei
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.button_order) {
-			Toast.makeText(getActivity(), "Comming soon", Toast.LENGTH_SHORT).show();
+			Message message = Message.buildCommand(Protocol.CMD_MOVE);
+			bluetoothService.send(message);
 		}
 	}
 }

@@ -89,19 +89,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 
 		if (position == 0) {
 			Fragment fragment = new DrinkListFragment();
-
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
 
 			return true;
 		} else if (position == 1) {
 			Fragment fragment = new BottleListFragment();
-
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
 
 			return true;
 		} else if (position == 2) {
 			Fragment fragment = new BeverageListFragment();
-
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
 
 			return true;

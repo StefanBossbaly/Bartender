@@ -51,6 +51,13 @@ public class Beverage extends Model {
 	public String toString(){
 		return this.name;
 	}
+	
+	public static Beverage getById(long id){
+		return new Select()
+				.from(Beverage.class)
+				.where("id = ?", id)
+				.executeSingle();
+	}
 
 	public List<BeverageDrink> BeverageDrink() {
 		return getMany(BeverageDrink.class, "beverage");

@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class BeverageListFragment extends ListFragment {
 
@@ -72,4 +73,14 @@ public class BeverageListFragment extends ListFragment {
 
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Beverage beverage = (Beverage) l.getAdapter().getItem(position);
+
+		Intent i = new Intent(getActivity(), AddBeverageActivity.class);
+		i.putExtra(AddBeverageActivity.PARAM_BEVERAGE_ID, beverage.getId());
+		startActivity(i);
+	}
+
 }

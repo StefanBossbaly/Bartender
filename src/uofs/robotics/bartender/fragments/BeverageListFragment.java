@@ -19,9 +19,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 public class BeverageListFragment extends ListFragment {
-
-	public BeverageListFragment() {
-
+	
+	public static BeverageListFragment newInstance() {
+		return new BeverageListFragment();
 	}
 
 	@Override

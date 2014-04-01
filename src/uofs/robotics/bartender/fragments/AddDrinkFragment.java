@@ -31,8 +31,8 @@ public class AddDrinkFragment extends Fragment implements OnClickListener {
 	private Button addIngredient;
 	private Button addDrink;
 
-	public AddDrinkFragment() {
-
+	public static AddDrinkFragment newInstance() {
+		return new AddDrinkFragment();
 	}
 
 	@Override

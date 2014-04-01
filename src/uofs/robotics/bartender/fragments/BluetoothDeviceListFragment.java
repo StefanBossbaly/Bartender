@@ -34,6 +34,10 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 	private ArrayAdapter<String> newDevicesAdapter;
 	private BluetoothBroadcastReciever bluetoothBroadcastReciever;
 	private BluetoothService bluetoothService;
+	
+	public static BluetoothDeviceListFragment newInstance() {
+		return new BluetoothDeviceListFragment();
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

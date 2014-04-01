@@ -22,11 +22,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class DrinkListFragment extends ListFragment {
-	
+
 	private static final String TAG = "DrinkListFragment";
 
-	public DrinkListFragment() {
-
+	public static DrinkListFragment newInstance() {
+		return new DrinkListFragment();
 	}
 
 	@Override
@@ -93,16 +93,16 @@ public class DrinkListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Get the selected drink
 		Drink drink = ((DrinkAdapter) l.getAdapter()).getItem(position);
-		
+
 		// Declare our paramaters
 		Bundle params = new Bundle();
-		params.putLong(DrinkInfoFragment.PARAM_DRINK_ID, drink.getId());
+		params.putLong(DrinkInfoActivity.PARAM_DRINK_ID, drink.getId());
 		Log.d(TAG, "Putting param drink id into bundle with value of " + drink.getId());
-		
+
 		// Create the intent
 		Intent i = new Intent(getActivity(), DrinkInfoActivity.class);
 		i.putExtras(params);
-		
+
 		// Off we go!
 		getActivity().startActivity(i);
 	}

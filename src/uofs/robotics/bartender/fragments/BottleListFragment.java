@@ -10,9 +10,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class BottleListFragment extends ListFragment {
-
-	public BottleListFragment() {
-
+	
+	public static BottleListFragment newInstance() {
+		return new BottleListFragment();
 	}
 
 	@Override

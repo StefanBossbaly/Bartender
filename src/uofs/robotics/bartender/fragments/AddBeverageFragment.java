@@ -2,6 +2,7 @@ package uofs.robotics.bartender.fragments;
 
 import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.models.Beverage;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -37,8 +38,9 @@ public class AddBeverageFragment extends Fragment implements OnClickListener {
 
 		return fragment;
 	}
-
+	
 	@Override
+	@SuppressLint("DefaultLocale")
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.fragment_add_beverage, container, false);

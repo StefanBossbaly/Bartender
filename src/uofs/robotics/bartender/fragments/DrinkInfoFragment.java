@@ -36,11 +36,25 @@ public class DrinkInfoFragment extends Fragment implements BluetoothServiceRecei
 
 	private long drinkId;
 
+	public static DrinkInfoFragment newInstance() {
+		return new DrinkInfoFragment();
+	}
+	
+	public static DrinkInfoFragment newInstance(long drinkID){
+		DrinkInfoFragment fragment = new DrinkInfoFragment();
+		
+		Bundle bundle = new Bundle();
+		bundle.putLong(PARAM_DRINK_ID, drinkID);
+		fragment.setArguments(bundle);
+		
+		return fragment;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Bundle bundle = getActivity().getIntent().getExtras();
+		Bundle bundle = getArguments();
 
 		// Get the paramater
 		if (bundle.containsKey(PARAM_DRINK_ID)) {

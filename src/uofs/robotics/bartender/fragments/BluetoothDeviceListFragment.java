@@ -4,6 +4,7 @@ import java.util.Set;
 
 import uofs.robotics.bartender.BartenderApplication;
 import uofs.robotics.bartender.R;
+import uofs.robotics.bartender.protocol.Message;
 import uofs.robotics.bartender.services.BluetoothService;
 import uofs.robotics.bartender.services.BluetoothServiceReceiver;
 import android.bluetooth.BluetoothAdapter;
@@ -141,6 +142,11 @@ public class BluetoothDeviceListFragment extends Fragment implements OnClickList
 	
 	@Override
 	public void dataReceived(byte[] data, int bytesRead) {
+		// We don't care
+	}
+	
+	@Override
+	public void messageRecieved(Message message) {
 		// We don't care
 	}
 

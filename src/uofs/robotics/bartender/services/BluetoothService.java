@@ -6,7 +6,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import uofs.robotics.bartender.protocol.MalformedMessageException;
 import uofs.robotics.bartender.protocol.Message;
+import uofs.robotics.bartender.protocol.Protocol;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -31,6 +33,9 @@ public class BluetoothService {
 
 	private final BluetoothAdapter bluetoothAdapter;
 
+	private int[] rxBuffer;
+	private int rxIndex;
+
 	// Private instance vars
 	private ConnectThread connectThread;
 	private ConnectedThread connectedThread;
@@ -40,6 +45,9 @@ public class BluetoothService {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		state = STATE_NONE;
 		receivers = new ArrayList<BluetoothServiceReceiver>();
+
+		rxBuffer = new int[32];
+		rxIndex = 0;
 
 		Log.i(TAG, "Service initialized");
 	}
@@ -88,6 +96,9 @@ public class BluetoothService {
 	public synchronized void send(Message message) {
 		if (getState() == STATE_CONNECTED) {
 			connectedThread.write(message.getContent());
+
+			Log.d(TAG, "Message sent command was " + message.getCommand());
+			Log.d(TAG, "Message contents are " + bytArrayToHex(message.getContent(), Protocol.MSG_SIZE));
 		} else {
 			throw new RuntimeException("Can't send message if we are not connected to a device");
 		}
@@ -170,6 +181,28 @@ public class BluetoothService {
 
 	private void connectionLost() {
 		setState(STATE_NONE);
+	}
+	
+	private static String bytArrayToHex(byte[] a, int bytes) {
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < bytes; i++) {
+			byte b = a[i];
+			sb.append(String.format("%02x", (b & 0xFF)));
+		}
+
+		return sb.toString();
+	}
+	
+	private static String intArrayToHex(int[] a, int bytes) {
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < bytes; i++) {
+			int b = a[i];
+			sb.append(String.format("%02x", (b & 0xFF)));
+		}
+
+		return sb.toString();
 	}
 
 	private class ConnectThread extends Thread {
@@ -262,22 +295,11 @@ public class BluetoothService {
 			outputStream = tempOut;
 		}
 
-		private String bytArrayToHex(byte[] a, int bytes) {
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < bytes; i++) {
-				byte b = a[i];
-				sb.append(String.format("%02x", (b & 0xFF)));
-			}
-
-			return sb.toString();
-		}
-
 		@Override
 		public void run() {
 			// Data holders
 			byte[] buffer = new byte[32];
-			int bytes = -1;
+			int bytesRead = -1;
 
 			while (true) {
 				// If we were interrupted then stop execution
@@ -290,16 +312,51 @@ public class BluetoothService {
 					if (inputStream.available() > 0) {
 
 						// Let's read in the inputStream
-						bytes = inputStream.read(buffer);
+						bytesRead = inputStream.read(buffer);
 
-						Log.d(TAG, "Recieved " + bytes + " bytes from bluetooth device");
-						Log.d(TAG, "Hex output: " + bytArrayToHex(buffer, bytes));
+						Log.d(TAG, "Recieved " + bytesRead + " bytes from bluetooth device");
+						Log.d(TAG, "Hex output: " + bytArrayToHex(buffer, bytesRead));
 
 						// Let the registered receivers know
 						for (BluetoothServiceReceiver receiver : receivers) {
-							receiver.dataReceived(buffer, bytes);
+							receiver.dataReceived(buffer, bytesRead);
 						}
 
+						// copy into our rxBuffer
+						for (int i = 0; i < bytesRead; i++) {
+							rxBuffer[rxIndex] = buffer[i];
+							rxIndex++;
+						}
+
+						// See if we have a message
+						if (rxIndex == 32) {
+							try {
+								Message message = new Message(rxBuffer);
+
+								Log.d(TAG,
+										"Message recieved type: " + message.getType() + " and command of " + message.getCommand() + " and response code of "
+												+ message.getResponseCode());
+
+								// Let the registered receivers know that we
+								// have a
+								// message
+								for (BluetoothServiceReceiver receiver : receivers) {
+									receiver.messageRecieved(message);
+								}
+
+								// Reset the index
+								rxIndex = 0;
+
+								// Clear the buffer
+								for (int i = 0; i < rxBuffer.length; i++) {
+									rxBuffer[i] = Protocol.BLANK;
+								}
+							} catch (MalformedMessageException e) {
+								Log.e(TAG, "Message was malformed", e);
+								Log.e(TAG, "Content of malformed message is: " + intArrayToHex(rxBuffer, rxIndex));
+								Log.e(TAG, "Start is " + rxBuffer[0] + " end is " + rxBuffer[31]);
+							}
+						}
 					} else {
 						// We don't have anything to do so give up CPU time
 						Thread.yield();

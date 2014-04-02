@@ -11,9 +11,14 @@
     <string name="title_drinks">Drinks</string>
     <string name="title_bottles">Bottles</string>
     <string name="title_beverages">Beverages</string>
+    <string name="title_developer_control">Developer Control</string>
     <string name="title_activity_add_drink">Add Drink</string>
     <string name="title_activity_add_beverage">Add Beverage</string>
     <string name="title_activity_bluetooth_device_list">Bluetooth Devices</string>
+    <string name="title_cmd_location">Location Command</string>
+    <string name="title_cmd_pour">Pour Command</string>
+    <string name="title_cmd_stop">Stop Command</string>
+    <string name="title_cmd_status">Status Command</string>
 
     <!-- Text Strings -->
     <string name="text_name">Name</string>
@@ -25,6 +30,9 @@
     <string name="text_drink_name">Drink Name</string>
     <string name="text_beverage">Beverage</string>
     <string name="text_type">Type</string>
+    <string name="text_location">Location</string>
+    <string name="text_pour">Pour</string>
+    <string name="text_default_status">No Status</string>
 
     <!-- Label Strings -->
     <string name="text_status">Status: </string>
@@ -36,9 +44,15 @@
     <string name="button_scan">Scan</string>
     <string name="button_order">Order</string>
     <string name="button_add_ingredient">Add Ingredient</string>
+    <string name="button_pour">Pour</string>
+    <string name="button_stop">Stop</string>
+    <string name="button_status">Status</string>
+    
+    
     <string name="app_name">Bartender</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_bluetooth">Bluetooth</string>
     <string name="title_activity_drink_info">Drink Information</string>
+    
 
 </resources>

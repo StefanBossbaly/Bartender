@@ -2,6 +2,7 @@ package uofs.robotics.bartender;
 
 import uofs.robotics.bartender.fragments.BeverageListFragment;
 import uofs.robotics.bartender.fragments.BottleListFragment;
+import uofs.robotics.bartender.fragments.DeveloperFragment;
 import uofs.robotics.bartender.fragments.DrinkListFragment;
 import uofs.robotics.bartender.services.BluetoothService;
 import android.app.ActionBar;
@@ -46,7 +47,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		actionBar.setListNavigationCallbacks(
 		// Specify a SpinnerAdapter to populate the dropdown list.
 				new ArrayAdapter<String>(actionBar.getThemedContext(), android.R.layout.simple_list_item_1, android.R.id.text1, new String[] { getString(R.string.title_drinks),
-						getString(R.string.title_bottles), getString(R.string.title_beverages), }), this);
+						getString(R.string.title_bottles), getString(R.string.title_beverages), getString(R.string.title_developer_control) }), this);
 	}
 
 	@Override
@@ -101,6 +102,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			Fragment fragment = BeverageListFragment.newInstance();
 			getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
 
+			return true;
+		} else if (position == 3) {
+			Fragment fragment = DeveloperFragment.newInstance();
+			getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
 			return true;
 		} else {
 			return false;

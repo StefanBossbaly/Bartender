@@ -120,6 +120,11 @@ public class DrinkInfoFragment extends Fragment implements BluetoothServiceRecei
 	public void dataReceived(byte[] data, int bytesRead) {
 		// Don't care
 	}
+	
+	@Override
+	public void messageRecieved(Message message) {
+		// Don't care
+	}
 
 	@Override
 	public void onClick(View view) {

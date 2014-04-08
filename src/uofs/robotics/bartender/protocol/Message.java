@@ -76,7 +76,7 @@ public class Message {
 		content[Protocol.I_END] = Protocol.MSG_END;
 	}
 
-	public Message(int content[]) {
+	public Message(int content[]) throws MalformedMessageException {
 
 		// Make sure that it is the right length
 		if (content.length != Protocol.MSG_SIZE)

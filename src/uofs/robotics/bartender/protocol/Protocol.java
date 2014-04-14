@@ -56,4 +56,6 @@ public class Protocol {
 	public static final int RSP_ERROR = 0x02;
 	public static final int RSP_MAL_MSG = 0x03;
 	public static final int RSP_UNK_CMD = 0x04;
+	public static final int RSP_COMPLETE = 0x05;
+	public static final int RSP_UNK_TYPE = 0x06;
 }

@@ -130,6 +130,10 @@ public class Message {
 	public void setParameter(int index, int value) {
 		content[index] = value;
 	}
+	
+	public int getParameter(int index) {
+		return content[index];
+	}
 
 	public byte[] getContent() {
 		byte[] buffer = new byte[Protocol.MSG_SIZE];

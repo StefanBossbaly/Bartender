@@ -3,6 +3,7 @@ package uofs.robotics.bartender.fragments;
 import uofs.robotics.bartender.BartenderApplication;
 import uofs.robotics.bartender.R;
 import uofs.robotics.bartender.protocol.Message;
+import uofs.robotics.bartender.protocol.Protocol;
 import uofs.robotics.bartender.services.BluetoothService;
 import uofs.robotics.bartender.services.BluetoothServiceReceiver;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ import android.widget.Toast;
 public class DeveloperFragment extends Fragment implements OnClickListener {
 
 	private Button stopButton, pourButton, statusButton;
-	private TextView locationText;
+	private TextView locationText, statusText;
 	private EditText shotAmountEdit;
 	private SeekBar locationSeek;
 
@@ -53,6 +54,7 @@ public class DeveloperFragment extends Fragment implements OnClickListener {
 
 		statusButton = (Button) view.findViewById(R.id.button_status);
 		statusButton.setOnClickListener(this);
+		statusText = (TextView) view.findViewById(R.id.text_status);
 
 		if (bluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
 			setViews(true);
@@ -115,7 +117,7 @@ public class DeveloperFragment extends Fragment implements OnClickListener {
 		@Override
 		public void stateChange(int oldState, final int newState) {
 			getActivity().runOnUiThread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					if (newState != BluetoothService.STATE_CONNECTED) {
@@ -134,7 +136,32 @@ public class DeveloperFragment extends Fragment implements OnClickListener {
 
 		@Override
 		public void messageRecieved(Message message) {
-			// TODO Auto-generated method stub
+			if (message.isResponse() && message.getCommand() == Protocol.CMD_STATUS) {
+				final String status;
+
+				switch (message.getParameter(Protocol.PARAM_STATUS)) {
+				case 0:
+					status = "None";
+					break;
+				case 1:
+					status = "Moving";
+					break;
+				case 2:
+					status = "Pouring";
+					break;
+				default:
+					status = "Unknown Code";
+					break;
+				}
+				
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						statusText.setText(status);
+					}
+				});
+				
+			}
 		}
 	};
 

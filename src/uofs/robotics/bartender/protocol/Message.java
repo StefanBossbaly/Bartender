@@ -40,7 +40,7 @@ public class Message {
 	public static Message buildPourCommand(int shots) {
 		Message message = new Message();
 		
-		message.setCommand(Protocol.TYPE_CMD);
+		message.setType(Protocol.TYPE_CMD);
 		message.setCommand(Protocol.CMD_POUR);
 		message.setResponseCode(Protocol.BLANK);
 		
@@ -52,7 +52,7 @@ public class Message {
 	public static Message buildStatusCommand() {
 		Message message = new Message();
 		
-		message.setCommand(Protocol.TYPE_CMD);
+		message.setType(Protocol.TYPE_CMD);
 		message.setCommand(Protocol.CMD_STATUS);
 		message.setResponseCode(Protocol.BLANK);
 		

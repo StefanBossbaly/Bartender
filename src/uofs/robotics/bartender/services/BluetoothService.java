@@ -182,7 +182,7 @@ public class BluetoothService {
 	private void connectionLost() {
 		setState(STATE_NONE);
 	}
-	
+
 	private static String bytArrayToHex(byte[] a, int bytes) {
 		StringBuilder sb = new StringBuilder();
 
@@ -193,7 +193,7 @@ public class BluetoothService {
 
 		return sb.toString();
 	}
-	
+
 	private static String intArrayToHex(int[] a, int bytes) {
 		StringBuilder sb = new StringBuilder();
 
@@ -326,35 +326,30 @@ public class BluetoothService {
 						for (int i = 0; i < bytesRead; i++) {
 							rxBuffer[rxIndex] = buffer[i];
 							rxIndex++;
-						}
 
-						// See if we have a message
-						if (rxIndex == 32) {
-							try {
-								Message message = new Message(rxBuffer);
+							// See if we have a message
+							if (rxIndex == Protocol.MSG_SIZE) {
+								try {
+									Message message = new Message(rxBuffer);
 
-								Log.d(TAG,
-										"Message recieved type: " + message.getType() + " and command of " + message.getCommand() + " and response code of "
-												+ message.getResponseCode());
+									Log.d(TAG,
+											"Message recieved type: " + message.getType() + " and command of " + message.getCommand() + " and response code of "
+													+ message.getResponseCode());
+									Log.d(TAG, "Contents of message is: " + bytArrayToHex(message.getContent(), Protocol.MSG_SIZE));
 
-								// Let the registered receivers know that we
-								// have a
-								// message
-								for (BluetoothServiceReceiver receiver : receivers) {
-									receiver.messageRecieved(message);
+									// Let the registered receivers know that we
+									// have a message
+									for (BluetoothServiceReceiver receiver : receivers) {
+										receiver.messageRecieved(message);
+									}
+								} catch (MalformedMessageException e) {
+									Log.e(TAG, "Message was malformed", e);
+									Log.e(TAG, "Content of malformed message is: " + intArrayToHex(rxBuffer, rxIndex));
+									Log.e(TAG, "Start is " + rxBuffer[0] + " end is " + rxBuffer[31]);
+								} finally {
+									// Reset the index
+									rxIndex = 0;
 								}
-
-								// Reset the index
-								rxIndex = 0;
-
-								// Clear the buffer
-								for (int i = 0; i < rxBuffer.length; i++) {
-									rxBuffer[i] = Protocol.BLANK;
-								}
-							} catch (MalformedMessageException e) {
-								Log.e(TAG, "Message was malformed", e);
-								Log.e(TAG, "Content of malformed message is: " + intArrayToHex(rxBuffer, rxIndex));
-								Log.e(TAG, "Start is " + rxBuffer[0] + " end is " + rxBuffer[31]);
 							}
 						}
 					} else {

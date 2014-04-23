@@ -46,6 +46,7 @@ public class Protocol {
 	public static final int PARAM_STATUS = 0x04;
 	
 	public static final int CMD_LOCATION = 0x05;
+	 
 	
 	// ---------------------------------------------------------------------------------
 	// Response Section

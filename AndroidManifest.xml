@@ -51,6 +51,10 @@
             android:name="uofs.robotics.bartender.DrinkInfoActivity"
             android:label="@string/title_activity_drink_info" >
         </activity>
+        <activity
+            android:name="uofs.robotics.bartender.AddBottleActivity"
+            android:label="@string/title_activity_add_bottle" >
+        </activity>
     </application>
 
 </manifest>

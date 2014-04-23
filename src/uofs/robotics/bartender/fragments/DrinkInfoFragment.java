@@ -8,9 +8,9 @@ import uofs.robotics.bartender.adapters.BeverageAdapter;
 import uofs.robotics.bartender.models.Beverage;
 import uofs.robotics.bartender.models.Drink;
 import uofs.robotics.bartender.protocol.Message;
-import uofs.robotics.bartender.protocol.Protocol;
 import uofs.robotics.bartender.services.BluetoothService;
 import uofs.robotics.bartender.services.BluetoothServiceReceiver;
+import uofs.robotics.bartender.services.ConnectionService;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -129,8 +129,8 @@ public class DrinkInfoFragment extends Fragment implements BluetoothServiceRecei
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.button_order) {
-			Message message = Message.buildCommand(Protocol.CMD_MOVE);
-			bluetoothService.send(message);
+			ConnectionService service = ((BartenderApplication) getActivity().getApplication()).getConnectionService();
+			service.order(Drink.getById(drinkId));
 		}
 	}
 }

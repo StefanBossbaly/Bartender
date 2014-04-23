@@ -36,6 +36,7 @@
 
     <!-- Label Strings -->
     <string name="text_status">Status: </string>
+    <string name="text_slot">Slot: </string>
 
     <!-- Button Strings -->
     <string name="button_add_drink">Add Drink</string>
@@ -47,12 +48,11 @@
     <string name="button_pour">Pour</string>
     <string name="button_stop">Stop</string>
     <string name="button_status">Status</string>
-    
-    
+    <string name="button_save">Save</string>
     <string name="app_name">Bartender</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_bluetooth">Bluetooth</string>
     <string name="title_activity_drink_info">Drink Information</string>
-    
+    <string name="title_activity_add_bottle">AddBottleActivity</string>
 
 </resources>

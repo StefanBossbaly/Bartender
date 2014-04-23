@@ -32,6 +32,10 @@ public class Bottle extends Model {
 		this.capacity = capacity;
 		this.taken = taken;
 	}
+	
+	public void setBeverage(Beverage beverage) {
+		this.beverage = beverage;
+	}
 
 	public Beverage getBeverage() {
 		return this.beverage;
@@ -73,5 +77,19 @@ public class Bottle extends Model {
 
 	public static List<Bottle> getAll() {
 		return new Select().from(Bottle.class).orderBy("slot ASC").execute();
+	}
+	
+	public static Bottle getById(long id){
+		return new Select()
+				.from(Bottle.class)
+				.where("id = ?", id)
+				.executeSingle();
+	}
+	
+	public static List<Bottle> getByBeverage(Beverage beverage) {
+		return new Select()
+					.from(Bottle.class)
+					.where("beverage = ?", beverage.getId())
+					.execute();
 	}
 }
